@@ -1,0 +1,15 @@
+{
+    "name": "user/mvc-framework",
+    "autoload": {
+        "psr-4": {
+            "app\\": "./"
+        }
+    },
+    "authors": [
+        {
+            "name": "Egor Khorunzhiy",
+            "email": "e.a.horunjiy@gmail.com"
+        }
+    ],
+    "require": {}
+}
