@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bootstrap указывает на файл, который будет подрубаться перед запуском тестов (см)  -->
+<phpunit bootstrap="./tests/bootstrap.php"     
+		 colors="true"
+		 convertErrorsToExceptions="true"
+		 convertNoticesToExceptions="true"
+		 convertWarningsToExceptions="true"
+		 stopOnFailure="false">
+	<testsuites>
+		<testsuite name="Test Suite">
+			<!-- В directory указывается папка, в которой лежат тесты -->
+			<directory>./tests</directory>
+		</testsuite>
+	</testsuites>
+</phpunit>
