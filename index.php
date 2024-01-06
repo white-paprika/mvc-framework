@@ -1,16 +1,18 @@
 <?php
-
-use app\core\Application;
-use app\core\request\AppRequest;
-use app\core\router\AppRouter;
-use app\core\StringHelper;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Reference;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-$stringHelper = new StringHelper;
-$request = new AppRequest($stringHelper);
-$router = new AppRouter($request);
-$app = new Application($router);
+$container = new ContainerBuilder();
+$container->register('string_helper', 'app\core\StringHelper');
+$container->register('app_request', 'app\core\request\AppRequest')
+          ->addArgument(new Reference('string_helper'));
+$container->register('app_router', 'app\core\router\AppRouter')
+          ->addArgument(new Reference('app_request'));
+$container->register('application', 'app\core\Application')
+          ->addArgument(new Reference('app_router'));
+$app = $container->get('application');
 
 // Define routes
 $app->router->get('/', function(){
