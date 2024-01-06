@@ -1,7 +1,6 @@
 <?php
 namespace app\core;
 
-use app\core\request\Request;
 use app\core\router\Router;
 
 class Application 
