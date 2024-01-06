@@ -1,29 +1,18 @@
 <?php
-
-use Pimple\Container;
-use app\core\Application;
-use app\core\request\AppRequest;
-use app\core\router\AppRouter;
-use app\core\StringHelper;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Reference;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-$container = new Container();
-
-$container['string_helper'] = function (Container $container) {
-    return new StringHelper;
-};
-$container['app_request'] = function (Container $container) {
-    return new AppRequest($container['string_helper']);
-};
-$container['app_router'] = function (Container $container) {
-    return new AppRouter($container['app_request']);
-};
-$container['application'] = function (Container $container) {
-    return new Application($container['app_router']);
-};
-
-$app = $container['application'];
+$container = new ContainerBuilder();
+$container->register('string_helper', 'app\core\StringHelper');
+$container->register('app_request', 'app\core\request\AppRequest')
+          ->addArgument(new Reference('string_helper'));
+$container->register('app_router', 'app\core\router\AppRouter')
+          ->addArgument(new Reference('app_request'));
+$container->register('application', 'app\core\Application')
+          ->addArgument(new Reference('app_router'));
+$app = $container->get('application');
 
 // Define routes
 $app->router->get('/', function () {
