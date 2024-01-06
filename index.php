@@ -1,17 +1,14 @@
 <?php
+
+use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
 $container = new ContainerBuilder();
-$container->register('string_helper', 'app\core\StringHelper');
-$container->register('app_request', 'app\core\request\AppRequest')
-          ->addArgument(new Reference('string_helper'));
-$container->register('app_router', 'app\core\router\AppRouter')
-          ->addArgument(new Reference('app_request'));
-$container->register('application', 'app\core\Application')
-          ->addArgument(new Reference('app_router'));
+$loader = new PhpFileLoader($container, new FileLocator(__DIR__));
+$loader->load('services.php');
 $app = $container->get('application');
 
 // Define routes
