@@ -1,26 +1,30 @@
 <?php
 
 use app\core\request\TestRequest;
+use app\core\response\AppResponse;
 use app\core\router\AppRouter;
-use app\core\StringHelper;
-use app\core\ViewManager;
+use app\core\view_service\TestViewService;
 use PHPUnit\Framework\TestCase;
+
+require_once __DIR__ . '/../vendor/autoload.php';
 
 class RouterTest extends TestCase
 {
     private $request;
-    private $viewManager;
+    private $response;
+    private $viewService;
 
     public function setUp(): void
     {
         parent::setUp();
         $this->request = new TestRequest;
-        $this->viewManager = new ViewManager(new StringHelper);
+        $this->response = new AppResponse;
+        $this->viewService = new TestViewService;
     }
 
     public function testGet()
     {
-        $router = new AppRouter($this->request, $this->viewManager);
+        $router = new AppRouter($this->request, $this->response, $this->viewService);
         $router->get('/', function(){
             return 'index';
         });
@@ -39,7 +43,7 @@ class RouterTest extends TestCase
 
     public function testPost()
     {
-        $router = new AppRouter($this->request, $this->viewManager);
+        $router = new AppRouter($this->request, $this->response, $this->viewService);
         $router->post('/', function(){
             return 'post index';
         });
@@ -56,33 +60,38 @@ class RouterTest extends TestCase
         $this->assertEquals('Add post', call_user_func($router->routes['post']['/user/posts']));
     }
 
-    // router->resolve() returns but not echo-es => rewrite resolve tests
-    public function testResolveWithValidRoute()
+    public function testResolveCallbackValidRoute()
     {
-        $router = new AppRouter($this->request, $this->viewManager);
+        $router = new AppRouter($this->request, $this->response, $this->viewService);
         $router->get('/test', function () {
-            echo 'Test route';
+            return 'Test route';
         });
 
-        ob_start();
-        $router->resolve();
-        $output = ob_get_clean();
+        $output = $router->resolve();
 
         $this->assertEquals('Test route', $output);
     }
 
-    public function testResolveWithInvalidRoute()
+    public function testResolveViewValidRoute()
     {
-        $router = new AppRouter($this->request, $this->viewManager);
+        $router = new AppRouter($this->request, $this->response, $this->viewService);
+        $router->get('/test', 'test');
+
+        $output = $router->resolve();
+
+        $this->assertEquals($this->viewService->renderView('test'), $output);
+    }
+
+    public function testResolveInvalidRoute()
+    {
+        $router = new AppRouter($this->request, $this->response, $this->viewService);
         $router->get('/not-test-path', function () {
             echo 'Not test!';
         });
 
-        // ob_start();
         $output = $router->resolve();
-        // $output = ob_get_clean();
 
-        $this->assertEquals('404', $output);
+        $this->assertEquals($this->viewService->renderNotFound(), $output);
     }
 
 }

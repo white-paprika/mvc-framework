@@ -3,20 +3,20 @@ namespace app\core\router;
 
 use app\core\request\Request;
 use app\core\response\Response;
-use app\core\ViewManager;
+use app\core\view_service\viewService;
 
 class AppRouter implements Router
 {
     public $request;
     public $response;
-    private $viewManager;
+    private $viewService;
     public $routes = [];
 
-    public function __construct(Request $request, Response $response, ViewManager $viewManager)
+    public function __construct(Request $request, Response $response, viewService $viewService)
     {
         $this->request = $request;
         $this->response = $response;
-        $this->viewManager = $viewManager;
+        $this->viewService = $viewService;
     }
 
     public function get(string $path, $callback): void
@@ -34,10 +34,10 @@ class AppRouter implements Router
         $callback = $this->getCallback();
 
         if(is_string($callback)){
-            return $this->viewManager->renderView($callback);
+            return $this->viewService->renderView($callback);
         } else if ($callback === false) {
             $this->response->setStatusCode('404');
-            return $this->viewManager->renderView('not_found');
+            return $this->viewService->renderNotFound();
         } else {
             return call_user_func($callback);
         }
