@@ -37,7 +37,7 @@ class AppRouter implements Router
             return $this->viewManager->renderView($callback);
         } else if ($callback === false) {
             $this->response->setStatusCode('404');
-            return '404';
+            return $this->viewManager->renderView('not_found');
         } else {
             return call_user_func($callback);
         }
