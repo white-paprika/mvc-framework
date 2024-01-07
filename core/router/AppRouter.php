@@ -2,15 +2,18 @@
 namespace app\core\router;
 
 use app\core\request\Request;
+use app\core\ViewManager;
 
 class AppRouter implements Router
 {
     public $request;
+    private $viewManager;
     public $routes = [];
 
-    public function __construct(Request $request)
+    public function __construct(Request $request, ViewManager $viewManager)
     {
         $this->request = $request;
+        $this->viewManager = $viewManager;
     }
 
     public function get(string $path, $callback): void
@@ -23,15 +26,23 @@ class AppRouter implements Router
         $this->routes['post'][$path] = $callback;
     }
 
-    public function resolve(): void
+    public function resolve()
+    {
+        $callback = $this->getCallback();
+
+        if(is_string($callback)){
+            return $this->viewManager->renderView($callback);
+        } else if ($callback === false) {
+            return '404';
+        } else {
+            return call_user_func($callback);
+        }
+    }
+
+    private function getCallback()
     {
         $path = $this->request->getPath();
         $method = $this->request->getMethod();
-        $callback = $this->routes[$method][$path] ?? false;
-        if ($callback === false) {
-            echo '404';
-        } else {
-            call_user_func($callback);
-        }
+        return $this->routes[$method][$path] ?? false;
     }
 }

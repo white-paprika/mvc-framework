@@ -15,14 +15,13 @@ $loader->load('../services.php');
 $app = $container->get('application');
 
 // Define routes
-$app->router->get('/', function () {
-    echo 'Index page';
-});
+$app->router->get('/', 'home');
+$app->router->get('/contact', 'contact');
 $app->router->get('/posts', function () {
-    echo 'Posts';
+    return 'Posts';
 });
 $app->router->post('/posts', function () {
-    echo 'Add post';
+    return 'Add post';
 });
 
 $app->run();

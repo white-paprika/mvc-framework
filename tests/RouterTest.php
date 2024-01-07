@@ -2,21 +2,25 @@
 
 use app\core\request\TestRequest;
 use app\core\router\AppRouter;
+use app\core\StringHelper;
+use app\core\ViewManager;
 use PHPUnit\Framework\TestCase;
 
 class RouterTest extends TestCase
 {
     private $request;
+    private $viewManager;
 
     public function setUp(): void
     {
         parent::setUp();
         $this->request = new TestRequest;
+        $this->viewManager = new ViewManager(new StringHelper);
     }
 
     public function testGet()
     {
-        $router = new AppRouter($this->request);
+        $router = new AppRouter($this->request, $this->viewManager);
         $router->get('/', function(){
             return 'index';
         });
@@ -35,7 +39,7 @@ class RouterTest extends TestCase
 
     public function testPost()
     {
-        $router = new AppRouter($this->request);
+        $router = new AppRouter($this->request, $this->viewManager);
         $router->post('/', function(){
             return 'post index';
         });
@@ -52,9 +56,10 @@ class RouterTest extends TestCase
         $this->assertEquals('Add post', call_user_func($router->routes['post']['/user/posts']));
     }
 
+    // router->resolve() returns but not echo-es => rewrite resolve tests
     public function testResolveWithValidRoute()
     {
-        $router = new AppRouter($this->request);
+        $router = new AppRouter($this->request, $this->viewManager);
         $router->get('/test', function () {
             echo 'Test route';
         });
@@ -68,14 +73,14 @@ class RouterTest extends TestCase
 
     public function testResolveWithInvalidRoute()
     {
-        $router = new AppRouter($this->request);
+        $router = new AppRouter($this->request, $this->viewManager);
         $router->get('/not-test-path', function () {
             echo 'Not test!';
         });
 
-        ob_start();
-        $router->resolve();
-        $output = ob_get_clean();
+        // ob_start();
+        $output = $router->resolve();
+        // $output = ob_get_clean();
 
         $this->assertEquals('404', $output);
     }
