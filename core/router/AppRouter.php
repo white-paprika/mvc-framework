@@ -2,17 +2,20 @@
 namespace app\core\router;
 
 use app\core\request\Request;
+use app\core\response\Response;
 use app\core\ViewManager;
 
 class AppRouter implements Router
 {
     public $request;
+    public $response;
     private $viewManager;
     public $routes = [];
 
-    public function __construct(Request $request, ViewManager $viewManager)
+    public function __construct(Request $request, Response $response, ViewManager $viewManager)
     {
         $this->request = $request;
+        $this->response = $response;
         $this->viewManager = $viewManager;
     }
 
@@ -33,6 +36,7 @@ class AppRouter implements Router
         if(is_string($callback)){
             return $this->viewManager->renderView($callback);
         } else if ($callback === false) {
+            $this->response->setStatusCode('404');
             return '404';
         } else {
             return call_user_func($callback);

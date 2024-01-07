@@ -16,8 +16,10 @@ return static function (ContainerConfigurator $container): void {
     $services->set('app_request', 'app\core\request\AppRequest')
         ->args([service('string_helper')])
     ;
+    $services->set('app_response', 'app\core\response\AppResponse')
+    ;
     $services->set('app_router', 'app\core\router\AppRouter')
-        ->args([service('app_request'), service('view_manager')])
+        ->args([service('app_request'), service('app_response'), service('view_manager')])
     ;
     $services->set('application', 'app\core\Application')
         ->args([service('app_router')])
