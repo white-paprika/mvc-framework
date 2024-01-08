@@ -64,12 +64,12 @@ class RouterTest extends TestCase
     {
         $router = new AppRouter($this->request, $this->response, $this->viewService);
         $router->get('/test', function () {
-            return 'Test route';
+            return 'Test route content';
         });
 
         $output = $router->resolve();
 
-        $this->assertEquals('Test route', $output);
+        $this->assertEquals('Test route content', $output);
     }
 
     public function testResolveViewValidRoute()
@@ -91,7 +91,7 @@ class RouterTest extends TestCase
 
         $output = $router->resolve();
 
-        $this->assertEquals($this->viewService->renderNotFound(), $output);
+        $this->assertEquals($this->viewService->renderView('page404'), $output);
     }
 
 }

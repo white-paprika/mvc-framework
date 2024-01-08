@@ -4,6 +4,7 @@ namespace app\core\router;
 use app\core\request\Request;
 use app\core\response\Response;
 use app\core\view_service\viewService;
+use Exception;
 
 class AppRouter implements Router
 {
@@ -34,10 +35,16 @@ class AppRouter implements Router
         $callback = $this->getCallback();
 
         if(is_string($callback)){
-            return $this->viewService->renderView($callback);
+            try {
+                return $this->viewService->renderView($callback);
+            } catch (Exception $e){
+                $this->response->setStatusCode('405');
+                return $this->viewService->renderView('page405');
+                //TODO: log exception
+            }
         } else if ($callback === false) {
             $this->response->setStatusCode('404');
-            return $this->viewService->renderNotFound();
+            return $this->viewService->renderView('page404');
         } else {
             return call_user_func($callback);
         }
