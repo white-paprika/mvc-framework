@@ -15,4 +15,12 @@ class StringHelperTest extends TestCase
         $this->assertEquals('Hello, m', $stringHelper->getBefore('Hello, my dear friend!', 'y dear'));
         $this->assertEquals('Hello,', $stringHelper->getBefore('Hello, my dear friend!', ' '));
     }
+
+    public function testGetBetween()
+    {
+        $stringHelper = new StringHelper;
+        $this->assertEquals('_text_', $stringHelper->getBetween('sometextbefore_@open-tag_text_@close-tag_sometextafter', '@open-tag', '@close-tag'));
+        $this->assertEquals('', $stringHelper->getBetween('sometextbefore_@open-tag@close-tag_sometextafter', '@open-tag', '@close-tag'));
+        $this->assertEquals('', $stringHelper->getBetween('sometextbefore_@open-tag_text_@close-tag_sometextafter', '@NOTopen-tag', '@NOTclose-tag'));
+    }
 }

@@ -13,7 +13,8 @@ class StringHelper
         return $string;
     }
 
-    function getBetween($string, $start, $end){
+    function getBetween($string, $start, $end): string
+    {
         $string = ' ' . $string;
         $ini = strpos($string, $start);
         if ($ini == 0) return '';
