@@ -1,5 +1,5 @@
 @layout("main")
 
 @content
-<h1>404 Not Found</h1>
+<h1>405 Method Not Allowed</h1>
 @endcontent
