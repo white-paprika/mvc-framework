@@ -16,7 +16,5 @@ interface ViewService
 
 
     public function renderView($viewName): string;
-
-    public function renderNotFound(): string;
-
+    
 }

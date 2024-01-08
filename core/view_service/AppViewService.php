@@ -1,7 +1,10 @@
 <?php
+declare(strict_types=1);
+
 namespace app\core\view_service;
 
 use app\core\StringHelper;
+use Exception;
 
 class AppViewService implements ViewService
 {
@@ -15,16 +18,23 @@ class AppViewService implements ViewService
     public function getViewContent(string $viewName): string
     {
         ob_start();
-        include ROOT_DIRECTORY . "/views/$viewName.php";
+        if(!@include ROOT_DIRECTORY . "/views/$viewName.php"){
+            ob_get_clean();
+            throw new Exception("getViewContent: view \"$viewName\" not found!");
+        };
         $fullContent = ob_get_clean();
         $viewContent = $this->stringHelper->getBetween($fullContent, '@content', '@endcontent');
+
         return $viewContent;
     }
 
     public function getLayoutContent(string $layoutName): string
     {
         ob_start();
-        include ROOT_DIRECTORY . "/views/layouts/$layoutName.php";
+        if(!@include ROOT_DIRECTORY . "/views/layouts/$layoutName.php"){
+            ob_get_clean();
+            throw new Exception("getLayoutContent: layout \"$layoutName\" not found!");
+        };
         $layoutContent = ob_get_clean();
         return $layoutContent;
     }
@@ -32,7 +42,10 @@ class AppViewService implements ViewService
     public function getRelatedLayoutName($viewName): string
     {
         ob_start();
-        include ROOT_DIRECTORY . "/views/$viewName.php";
+        if(!@include ROOT_DIRECTORY . "/views/$viewName.php"){
+            ob_get_clean();
+            throw new Exception("getRelatedLayoutName(): view \"$viewName\" not found!");
+        };
         $fullContent = ob_get_clean();
         $layoutName = $this->stringHelper->getBetween($fullContent, '@layout("', '")');
         return $layoutName;
@@ -45,15 +58,11 @@ class AppViewService implements ViewService
 
     public function renderView($viewName): string
     {
-        $layoutName = $this->getRelatedLayoutName($viewName);
         $viewContent = $this->getViewContent($viewName);
+        $layoutName = $this->getRelatedLayoutName($viewName);
+        if (!$layoutName) return $viewContent;
         $layoutContent = $this->getLayoutContent($layoutName);
         $renderContent = $this->injectViewToLayout($viewContent, $layoutContent);
         return $renderContent;
-    }
-
-    public function renderNotFound(): string
-    {
-        return $this->renderView('page404');
     }
 }

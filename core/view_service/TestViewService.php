@@ -25,11 +25,7 @@ class TestViewService implements ViewService
 
     public function renderView($viewName): string
     {
-        return 'render content';
-    }
-
-    public function renderNotFound(): string
-    {
-        return '404: Not Found';
+        if ($viewName === 'page404') return '404 Not Found';
+        return 'render view successfully';
     }
 }
