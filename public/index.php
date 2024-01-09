@@ -23,5 +23,6 @@ $app->router->get('/posts', function () {
 $app->router->post('/posts', function () {
     return 'Add post';
 });
+$app->router->get('/about', 'about');
 
 $app->run();

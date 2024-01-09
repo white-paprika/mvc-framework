@@ -6,6 +6,8 @@ use app\core\response\Response;
 use app\core\view_service\viewService;
 use Exception;
 
+require_once ROOT_DIRECTORY . '/config/log_handler.php';
+
 class AppRouter implements Router
 {
     public $request;
@@ -38,9 +40,9 @@ class AppRouter implements Router
             try {
                 return $this->viewService->renderView($callback);
             } catch (Exception $e){
+                logException($e);
                 $this->response->setStatusCode('405');
                 return $this->viewService->renderView('page405');
-                //TODO: log exception
             }
         } else if ($callback === false) {
             $this->response->setStatusCode('404');
