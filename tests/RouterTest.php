@@ -7,6 +7,7 @@ use app\core\view_service\TestViewService;
 use PHPUnit\Framework\TestCase;
 
 require_once __DIR__ . '/../vendor/autoload.php';
+define('ROOT_DIRECTORY', dirname(__DIR__));
 
 class RouterTest extends TestCase
 {
